@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foto album kenangan Family ❤️</title>
+
+
+<style>
+/* ===== RESET & VARIABEL MODERN ===== */
+:root {
+    --bg-light: #f8fafc;
+    --bg-dark: #020617;
+    --text-light: #0f172a;
+    --text-dark: #e5e7eb;
+    --card-light: rgba(255,255,255,0.75);
+    --card-dark: rgba(15,23,42,0.7);
+    --accent: #ec4899;
+    --radius: 20px;
+    --blur: 16px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+    background: var(--bg-light);
+    color: var(--text-light);
+    text-align: center;
+    overflow-x: hidden;
+}
+
+/* ===== BACKGROUND DINAMIS ===== */
+#bg {
+    position: fixed;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(18px) brightness(0.55);
+    transform: scale(1.15);
+    z-index: -2;
+    transition: background-image 1.8s ease-in-out, opacity 1.8s;
+}
+
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.35),
+        rgba(255,255,255,0.55)
+    );
+    z-index: -1;
+}
+
+
+/* ===== SECTION MODERN (CARD GLASS) ===== */
+section {
+    margin: 24px auto;
+    padding: 28px 22px;
+    max-width: 900px;
+    background: var(--card-light);
+    backdrop-filter: blur(var(--blur));
+    border-radius: var(--radius);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+/* ===== JUDUL ===== */
+h1 {
+    margin: 0 0 10px;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+h2 {
+    margin-top: 0;
+    font-weight: 600;
+}
+
+/* ===== TOMBOL MODERN ===== */
+button {
+    padding: 12px 26px;
+    font-size: 15px;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(135deg, #ec4899, #f472b6);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(236,72,153,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(236,72,153,0.55);
+}
+
+/* ===== ALBUM FOTO ===== */
+.album {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.album img {
+    width: 100%;
+    border-radius: 18px;
+    padding: 5px;
+    background: linear-gradient(135deg, #fbcfe8, #fff);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.album img:hover {
+    transform: scale(1.07);
+    box-shadow: 0 18px 36px rgba(0,0,0,0.28);
+}
+
+/* ===== POPUP FULLSCREEN ===== */
+.popup {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup img {
+    max-width: 94%;
+    max-height: 88%;
+    border-radius: 20px;
+    animation: zoomIn 0.4s ease;
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+.close {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    font-size: 28px;
+    color: white;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.close:hover {
+    opacity: 1;
+}
+
+/* ===== ANIMASI POJOK ===== */
+.corner {
+    position: fixed;
+    font-size: 26px;
+    opacity: 0.7;
+    pointer-events: none;
+    animation: float 5s ease-in-out infinite;
+    z-index: 10;
+}
+
+.top-left { top: 14px; left: 14px; }
+.top-right { top: 14px; right: 14px; animation-delay: 1s; }
+.bottom-left { bottom: 14px; left: 14px; animation-delay: 2s; }
+.bottom-right { bottom: 14px; right: 14px; animation-delay: 3s; }
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0); }
+}
+
+.corner.pop {
+    animation: pop 0.5s ease;
+}
+
+@keyframes pop {
+    0% { transform: scale(0.8); opacity: 0.4; }
+    60% { transform: scale(1.25); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
+}
+
+/* ===== MODE MALAM ===== */
+body.malam {
+    background: var(--bg-dark);
+    color: var(--text-dark);
+}
+
+body.malam .overlay {
+    background: linear-gradient(
+        to bottom,
+        rgba(2,6,23,0.75),
+        rgba(2,6,23,0.9)
+    );
+}
+
+body.malam section {
+    background: var(--card-dark);
+}
+
+body.malam .album img {
+    background: linear-gradient(135deg, #334155, #020617);
+}
+
+body.malam button {
+    background: linear-gradient(135deg, #475569, #1e293b);
+}
+
+/* indikator foto */
+.counter {
+    position: absolute;
+    top: 18px;
+    left: 20px;
+    color: white;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* progress bar */
+.progress {
+    position: absolute;
+    bottom: 25px;
+    width: 60%;
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ec4899, #f472b6);
+    transition: width 0.3s;
+}
+
+.popup:hover .counter,
+.popup:hover .progress,
+.popup:hover .close {
+    opacity: 1;
+}
+
+.counter, .progress, .close {
+    transition: opacity 0.3s;
+}
+
+/* ===== BUNGA JATUH ===== */
+.flower {
+    position: fixed;
+    top: -40px;
+    font-size: 26px;
+    pointer-events: none;
+    z-index: 999; /* PALING PENTING */
+    animation: jatuh linear infinite;
+}
+
+@keyframes jatuh {
+    0% {
+        transform: translateY(-40px) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+</style>
+</head>
+ 
+
+<body class="fade">
+    <div id="bg"></div>
+    <div class="overlay"></div>
+
+    <!-- hiasan pojok -->
+<div class="corner top-left">🌸</div>
+<div class="corner top-right">✨</div>
+<div class="corner bottom-left">💖</div>
+<div class="corner bottom-right">🌿</div>
+
+
+<!-- MUSIK -->
+<audio id="musik" loop>
+    <source src="musik.mp3" type="audio/mpeg">
+</audio>
+<audio id="efek">
+    <source src="klik.mp3" type="audio/mpeg">
+</audio>
+
+
+<section>
+    <h1>Album Kenangan Keluarga</h1>
+    <p style="font-style: italic;">Momen sederhana, cinta luar biasa ❤️</p>
+    <p class="tanggal" id="tgl"></p>
+    <p style="margin-top:12px; font-style: italic; font-size: 14px;">📅 Dibuat pada: 10 Februari 2007</p>
+    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+    <button onclick="mulai()">▶ Putar</button>
+    <button onclick="pauseMusik()">⏸ Pause</button>
+    <button onclick="stopMusik()">⏹ Stop</button>
+    <button onclick="toggleMode()">🌙 Mode Malam</button>
+</div>
+
+</section>
+
+<section>
+    <h2>📸 Album Kenangan</h2>
+    <p style="font-style: italic; margin-bottom: 20px;">Setiap foto adalah cerita, setiap cerita adalah keluarga 🤍</p>
+    <div class="album">
+        <img src="foto/1.jpeg" onclick="buka(this.src)">
+        <img src="foto/2.jpeg" onclick="buka(this.src)">
+        <img src="foto/3.jpeg" onclick="buka(this.src)">
+        <img src="foto/4.jpeg" onclick="buka(this.src)">
+        <img src="foto/5.jpeg" onclick="buka(this.src)">
+        <img src="foto/6.jpeg" onclick="buka(this.src)">
+        <img src="foto/7.jpeg" onclick="buka(this.src)">
+        <img src="foto/8.jpeg" onclick="buka(this.src)">
+        <img src="foto/9.jpeg" onclick="buka(this.src)">
+        <img src="foto/a.jpeg" onclick="buka(this.src)">
+        <img src="foto/b.jpeg" onclick="buka(this.src)">
+        <img src="foto/c.jpeg" onclick="buka(this.src)">
+    </div> 
+</section>
+
+<!-- POPUP FOTO -->
+<div class="popup" id="popup">
+    <span class="close" onclick="tutup()">✖</span>
+    <div class="counter" id="counter"></div>
+    <img id="popupImg">
+    <div class="progress"><div class="bar" id="bar"></div></div>
+</div>
+
+<script>
+
+// musik 
+function mulai() 
+{ document.getElementById("musik").play(); } 
+const audio = document.getElementById("musik");
+
+// pause musik
+function pauseMusik() {
+    audio.pause();
+}
+
+// stop musik (pause + ulang ke awal)
+function stopMusik() {
+    audio.pause();
+    audio.currentTime = 0;
+}
+
+
+// ===== FULLSCREEN + SWIPE =====
+let currentIndex = 0;
+const images = Array.from(document.querySelectorAll(".album img"));
+const popup = document.getElementById("popup");
+const popupImg = document.getElementById("popupImg");
+const counter = document.getElementById("counter");
+const bar = document.getElementById("bar");
+
+let slideTimer;
+
+// buka fullscreen
+function buka(src) {
+    popup.style.display = "flex";
+    currentIndex = images.findIndex(img => img.src === src);
+    tampilkan();
+    mulaiSlideshow();
+}
+
+// tutup
+function tutup() {
+    popup.style.display = "none";
+    clearInterval(slideTimer);
+}
+
+
+// swipe HP
+let startX = 0;
+popup.addEventListener("touchstart", e => startX = e.touches[0].clientX);
+popup.addEventListener("touchend", e => {
+    const endX = e.changedTouches[0].clientX;
+    if (startX - endX > 50) geser(1);
+    if (endX - startX > 50) geser(-1);
+});
+
+// tampilkan foto
+function tampilkan() {
+    popupImg.style.opacity = 0;
+
+    setTimeout(() => {
+        popupImg.src = images[currentIndex].src;
+        popupImg.style.opacity = 1;
+
+        counter.innerText = `Foto ${currentIndex + 1} / ${images.length}`;
+        bar.style.width = "0%";
+        setTimeout(() => bar.style.width = "100%", 50);
+
+        updateCorners(); // animasi pojok
+        bunyiLembut();   // efek suara
+    }, 200);
+}
+
+// geser
+function geser(arah) {
+    currentIndex = (currentIndex + arah + images.length) % images.length;
+    tampilkan();
+}
+
+function mulaiSlideshow() {
+    clearInterval(slideTimer);
+    slideTimer = setInterval(() => {
+        geser(1);
+    }, 4000); // ganti foto tiap 4 detik
+}
+
+
+
+// ===== EFEK BUNGA JATUH =====
+setInterval(() => {
+    const bunga = document.createElement("div");
+    bunga.className = "flower";
+    const bungaList = ["🌸","🌺","🍃","💮"];
+bunga.innerText = bungaList[Math.floor(Math.random()*bungaList.length)];
+
+
+    bunga.style.left = Math.random() * 100 + "vw";
+    bunga.style.animationDuration = (4 + Math.random() * 4) + "s";
+
+    document.body.appendChild(bunga);
+
+    setTimeout(() => {
+        bunga.remove();
+    }, 8000);
+}, 600);
+
+
+
+// ===== BACKGROUND PHOTO SLIDESHOW =====
+const bg = document.getElementById("bg");
+
+const bgImages = [
+    "foto/1.jpeg",
+    "foto/2.jpeg",
+    "foto/3.jpeg",
+    "foto/4.jpeg",
+    "foto/5.jpeg",
+    "foto/6.jpeg",
+    "foto/7.jpeg",
+];
+
+let bgIndex = 0;
+
+// set background pertama
+bg.style.backgroundImage = `url("${bgImages[0]}")`;
+
+// ganti background otomatis
+setInterval(() => {
+    bgIndex = (bgIndex + 1) % bgImages.length;
+    bg.style.backgroundImage = `url("${bgImages[bgIndex]}")`;
+}, 5000); // 5 detik
+
+
+// klik kiri/kanan layar
+popup.addEventListener("click", e => {
+    if (e.target.classList.contains("close")) return;
+    e.clientX > window.innerWidth / 2 ? geser(1) : geser(-1);
+});
+
+// toggle mode malam
+function toggleMode() {
+    document.body.classList.toggle("malam");
+    if (document.body.classList.contains("malam")) {
+    audio.volume = 0.4; // lebih pelan
+} else {
+    audio.volume = 0.8; // normal
+}
+
+
+    // simpan pilihan
+    if (document.body.classList.contains("malam")) {
+        localStorage.setItem("mode", "malam");
+    } else {
+        localStorage.setItem("mode", "terang");
+    }
+}
+
+// cek mode terakhir saat web dibuka
+if (localStorage.getItem("mode") === "malam") {
+    document.body.classList.add("malam");
+}
+
+// efek suara sederhana (tanpa file)
+function bunyiLembut() {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = "sine";
+    o.frequency.value = 600;
+    g.gain.value = 0.03;
+    o.connect(g);
+    g.connect(ctx.destination);
+    o.start();
+    o.stop(ctx.currentTime + 0.08);
+}
+const hariIni = new Date().toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+});
+document.getElementById("tgl").innerText = "📅 " + hariIni;
+
+// ===== ANIMASI POJOK BERUBAH SAAT FOTO DIGESER =====
+const cornerEmojis = ["🌸", "✨", "💖", "🌿", "⭐", "🍃", "🌷", "💫"];
+const corners = document.querySelectorAll(".corner");
+function updateCorners() {
+    corners.forEach(corner => {
+        // ganti emoji random
+        const emoji = cornerEmojis[Math.floor(Math.random() * cornerEmojis.length)];
+        corner.innerText = emoji;
+
+        // trigger animasi
+        corner.classList.remove("pop");
+        void corner.offsetWidth; // reset animation
+        corner.classList.add("pop");
+    });
+}
+
+</script>
+</body>
+</html>
